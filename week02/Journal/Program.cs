@@ -4,7 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Journal journal = new Journal()
+        Journal journal = new Journal();
         while (true)
         {
             Console.WriteLine("\nWelcome to the Journal Program!");
@@ -23,10 +23,10 @@ class Program
                     journal.DisplayEntries();
                     break;
                 case "3":
-                    journal.SaveToFile();
+                    journal.LoadFromFile();
                     break;
                 case "4":
-                    journal.LoadFromFile();
+                    journal.SaveToFile();
                     break;
                 case "5":
                     Console.WriteLine("Thank you. Goodbye!");
