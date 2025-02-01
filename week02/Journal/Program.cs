@@ -1,3 +1,5 @@
+// This program allows the user to choose the type of file they want to save.
+
 using System;
 
 class Program
