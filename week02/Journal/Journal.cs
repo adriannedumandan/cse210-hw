@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 public class Journal
 {
@@ -51,7 +52,10 @@ public class Journal
             {
                 foreach (var entry in _entries)
                 {
-                    writer.WriteLine(entry);
+                    writer.WriteLine(entry.Date.ToString("yyyy-MM-dd HH:mm:ss")); 
+                    writer.WriteLine(entry.Prompt);
+                    writer.WriteLine(entry.Response);
+                    writer.WriteLine("---"); 
                 }
             }
             Console.WriteLine("Journal saved successfully.\n");
@@ -60,71 +64,51 @@ public class Journal
         {
             Console.WriteLine($"Error saving journal: {ex.Message}\n");
         }
-    }
+    }   
+
 
     public void LoadFromFile()
-    {
+        {
         Console.Write("What is the filename? ");
         string filename = Console.ReadLine();
-    
+
         if (File.Exists(filename))
         {
-            try
+            _entries.Clear(); 
+
+            string[] lines = File.ReadAllLines(filename);
+            for (int i = 0; i < lines.Length; i++)
             {
-                _entries.Clear();
-    
-                using (StreamReader reader = new StreamReader(filename))
+                if (lines[i].Trim() == "---") continue; 
+
+                if (i + 2 < lines.Length)
                 {
-                    string line;
-                    string prompt = null;
-                    string response = null;
-                    DateTime date = DateTime.MinValue;
-    
-                    while ((line = reader.ReadLine()) != null)
+                    string dateStr = lines[i].Trim();
+                    string prompt = lines[i + 1].Trim();
+                    string response = lines[i + 2].Trim();
+
+                    if (DateTime.TryParse(dateStr, out DateTime date))
                     {
-                        if (line.StartsWith("Date: "))
-                        {
-                            date = DateTime.Parse(line.Substring(6));
-                        }
-                        else if (line.StartsWith("Prompt: "))
-                        {
-                            prompt = line.Substring(8);
-                        }
-                        else if (line.StartsWith("Response: "))
-                        {
-                            response = line.Substring(10);
-                        }
-                        else if (line == "")
-                        {
-                            if (prompt != null && response != null)
-                            {
-                                _entries.Add(new Entry(prompt, response) { Date = date });
-                                prompt = null;
-                                response = null;
-                            }
-                        }
+                        Entry entry = new Entry(prompt, response) { Date = date };
+                        _entries.Add(entry);
                     }
-    
-                    
-                    if (prompt != null && response != null)
-                    {
-                        _entries.Add(new Entry(prompt, response) { Date = date });
-                    }
+                    i += 2; 
                 }
-    
-                Console.WriteLine("Journal loaded successfully.\n");
-    
-               
-                DisplayEntries();
             }
-            catch (Exception ex)
+
+            if (_entries.Count > 0)
             {
-                Console.WriteLine($"Error loading journal: {ex.Message}\n");
+                Console.WriteLine("\nJournal successfully loaded.\n");
+                DisplayEntries(); 
+            }
+            else
+            {
+                Console.WriteLine("File is empty or incorrectly formatted.\n");
             }
         }
         else
         {
-            Console.WriteLine("File not found.\n");
+            Console.WriteLine("Error: File does not exist.\n");
         }
     }
 
