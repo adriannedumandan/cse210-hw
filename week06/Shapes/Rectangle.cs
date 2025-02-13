@@ -9,7 +9,6 @@ public class Rectangle : Shape
         _width = width;
     }
 
-    // Notice the use of the override keyword here
     public override double GetArea()
     {
         return _length * _width;
