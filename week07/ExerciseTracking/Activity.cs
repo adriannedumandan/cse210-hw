@@ -23,7 +23,7 @@ public abstract class Activity
 
     public string GetSummary()
     {
-        string summary = $"{Date.ToString("dd MMM yyyy")} ";
+        string summary = $"\n{Date.ToString("dd MMM yyyy")} ";
         summary += $"{this.GetType().Name} ({Minutes} min): ";
         summary += $"Distance: {GetDistance():0.0} miles, ";
         summary += $"Speed: {GetSpeed():0.0} mph, ";
